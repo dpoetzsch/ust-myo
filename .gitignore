@@ -8,3 +8,10 @@ a.out
 /cmake_install.cmake
 /Makefile
 /myo-server
+
+*.opensdf
+*.sdf
+*.suo
+*.user
+
+src/x64/*
