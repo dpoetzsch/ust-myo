@@ -1,5 +1,5 @@
 //
-// server.cpp
+// server.hpp
 // ~~~~~~~~~~
 //
 // Copyright (c) 2016 David Poetzsch-Heffter <davidpoetzsch@gmx.net>
@@ -11,8 +11,6 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/asio.hpp>
-#include <boost/thread/thread.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
 
 using boost::asio::ip::tcp;
 
@@ -80,21 +78,3 @@ private:
   tcp::acceptor acceptor;
   tcp::socket *socket;
 };
-
-int main() {
-  try {
-    GrabServer server;
-
-    for (;;) {
-      server.acceptConnection();
-
-      while (server.signalGrab(85)) {
-        boost::this_thread::sleep(boost::posix_time::millisec(1000));
-      }
-    }
-  } catch (std::exception &e) {
-    std::cerr << e.what() << std::endl;
-  }
-
-  return 0;
-}
