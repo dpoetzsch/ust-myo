@@ -3,7 +3,7 @@ project(myo-server)
 include_directories(src)
 add_executable(myo-server src/server.cpp)
 
-find_package(Boost 1.55 COMPONENTS system REQUIRED)
+find_package(Boost 1.55 COMPONENTS system thread REQUIRED)
 message(status "** Boost Include: ${Boost_INCLUDE_DIR}")
 message(status "** Boost Libraries: ${Boost_LIBRARY_DIRS}")
 message(status "** Boost Libraries: ${Boost_LIBRARIES}")
