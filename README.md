@@ -17,7 +17,7 @@ In the build directory call
 
     ./myo-server
 
-This starts the myo server on localhost:2000.
+This starts the myo server on `localhost:2000`.
 
 # Test
 
