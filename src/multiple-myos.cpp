@@ -22,6 +22,13 @@ int main(int argc, char** argv)
         while (1) {
             // Process events for 10 milliseconds at a time.
             hub.run(10);
+
+
+			// use this calls to get the holdingstate for each arm
+			printer.getHoldingStateRight();
+			printer.getHoldingStateLeft();
+			//
+
         }
     } catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;

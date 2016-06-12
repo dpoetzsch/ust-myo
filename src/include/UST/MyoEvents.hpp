@@ -175,6 +175,20 @@ public:
 		return 0;
 	}
 
+	bool getHoldingStateRight(){
+		if (right != 0){
+			return right->getHoldingState();
+		}
+		return false;
+	}
+
+	bool getHoldingStateLeft(){
+		if (left != 0){
+			return left->getHoldingState();
+		}
+		return false;
+	}
+
 	// We store each Myo pointer that we pair with in this list, so that we can keep track of the order we've seen
 	// each Myo and give it a unique short identifier (see onPair() and identifyMyo() above).
 	std::vector<myo::Myo*> knownMyos;
