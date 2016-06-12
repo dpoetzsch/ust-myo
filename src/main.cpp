@@ -18,7 +18,13 @@ int main() {
     for (;;) {
       server.acceptConnection();
 
-      while (server.signalGrab(85)) {
+      // TODO check the myo for data
+      // TODO analyse that data
+      // TODO if grab detected: use server.signalGrab(likelyhood)
+      
+      // DEMO: continuously send the grab signal with 85.0% likelyhood
+      // until the client closes the connection
+      while (server.signalGrab(850)) {
         boost::this_thread::sleep(boost::posix_time::millisec(1000));
       }
     }
