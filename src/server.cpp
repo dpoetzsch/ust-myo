@@ -14,13 +14,6 @@
 #include <boost/thread/thread.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
-#ifdef LINUX
-#include <unistd.h>
-#endif
-#ifdef WINDOWS
-#include <windows.h>
-#endif
-
 using boost::asio::ip::tcp;
 
 std::string make_daytime_string() {
