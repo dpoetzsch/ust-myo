@@ -50,7 +50,7 @@ public:
    * @return true if sending was successful, false if the connection was closed.
    */
   bool signalGrab(int likelyhood) {
-    return sendMessage("{ \"grabbed\": \"" + boost::lexical_cast<std::string>(likelyhood) + "\", \"time\": \"" + make_daytime_string() + "\" }");
+    return sendMessage("{ \"likelyhood\": \"" + boost::lexical_cast<std::string>(likelyhood) + "\", \"time\": \"" + make_daytime_string() + "\" }");
   }
 
 private:
@@ -64,7 +64,7 @@ private:
     } else {
       std::cout << "Sending message: '" << msg << "'\n";
       boost::system::error_code error;
-      boost::asio::write(*socket, boost::asio::buffer(msg), error);
+      boost::asio::write(*socket, boost::asio::buffer(msg + "\n"), error);
       if (error != 0) {
         std::cout << "Connection was closed.\n";
         return false;
