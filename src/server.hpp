@@ -22,6 +22,26 @@ std::string make_daytime_string() {
   return s;
 }
 
+enum Extremity {
+  HAND_LEFT,
+  HAND_RIGHT,
+  FOOT_LEFT,
+  FOOT_RIGHT
+};
+
+std::string extremityToJson(Extremity extremity) {
+  switch (extremity) {
+  case HAND_LEFT:
+    return "1";
+  case HAND_RIGHT:
+    return "2";
+  case FOOT_LEFT:
+    return "3";
+  case FOOT_RIGHT:
+    return "4";
+  }
+}
+
 class GrabServer {
 public:
   static const int SERVER_PORT = 2000;
@@ -49,8 +69,10 @@ public:
   /**
    * @return true if sending was successful, false if the connection was closed.
    */
-  bool signalGrab(int likelyhood) {
-    return sendMessage("{ \"likelyhood\": \"" + boost::lexical_cast<std::string>(likelyhood) + "\", \"time\": \"" + make_daytime_string() + "\" }");
+  bool signalGrab(Extremity extremity, int likelyhood) {
+    return sendMessage("{ \"likelyhood\": " + boost::lexical_cast<std::string>(likelyhood) +
+      ", \"extremity\": " + extremityToJson(extremity) +
+      ", \"time\": \"" + make_daytime_string() + "\" }");
   }
 
 private:

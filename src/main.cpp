@@ -24,7 +24,7 @@ int main() {
       
       // DEMO: continuously send the grab signal with 85.0% likelyhood
       // until the client closes the connection
-      while (server.signalGrab(850)) {
+      while (server.signalGrab(HAND_LEFT, 850)) {
         boost::this_thread::sleep(boost::posix_time::millisec(1000));
       }
     }
