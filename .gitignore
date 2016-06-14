@@ -15,3 +15,5 @@ a.out
 *.user
 
 src/x64/*
+
+src/Debug

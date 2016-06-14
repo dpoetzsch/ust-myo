@@ -10,9 +10,9 @@ class MyoData {
 private:
 
 	// debug prints
-	const bool emgprint = true;
-	const bool countprint = true;
-	const bool otherprints = true;
+	const bool emgprint = false;
+	const bool countprint = false;
+	const bool otherprints = false;
 
 	// threshold values for hold detection
 	// these 3 values are experimental, they may or may not be correct (but this worked best for me), probably they need some recalibration if someone else uses the myo
