@@ -21,7 +21,7 @@ private:
 	const int releasethreshold = 5;
 	const int holdingthreshold = 10;
 
-	const double armlength = 25; // distance from myo on the arm to the middle of the hand
+	const double armlength = 25; //[cm] distance from myo on the arm to the middle of the hand
 
 	myo::Myo* myoDevice;
 	myo::Arm arm;
@@ -221,30 +221,34 @@ public:
 		using std::atan2;
 		using std::sin;
 		using std::sqrt;
-		double sp = sin(ret[1]) * armlength;
-		double sy = sin(ret[2]) * armlength;
-/*		double distance = sqrt((sp * sp) + (sy * sy));
+		double offsety = sin(ret[1]) * armlength;
+		double offsetx = sin(ret[2]) * armlength;
+		double* ret2 = new double[2];
+		ret2[0] = offsetx;
+		ret2[1] = offsety;
+/*		double distance = sqrt((offsety * offsety) + (offsetx * offsetx));
 		double angle = 0.0;
-		if (sp >= 0){
-			if (sy >= 0){
-				angle = atan2(sp, sy);
+		if (offsety >= 0){
+			if (offsetx >= 0){
+				angle = atan2(offsety, offsetx);
 			}
 			else{
-				angle = 90.0 + atan2(sp, -sy);
+				angle = 90.0 + atan2(offsety, -offsetx);
 			}
 		}
 		else{
-			if (sy >= 0){
-				angle = 270 + atan2(-sp, sy);
+			if (offsetx >= 0){
+				angle = 270 + atan2(-offsety, offsetx);
 			}
 			else{
-				angle = 180.0 + atan2(-sp, -sy);
+				angle = 180.0 + atan2(-offsety, -offsetx);
 			}
 		}*/
 		if (orientationprint){
 			std::cout << armString << ": orientationdata: roll: " << ret[0] << "; pitch: " << ret[1] << "; yaw: " << ret[2] << ";" << std::endl;
+			std::cout << armString << ": orientationdata offset: sp: " << offsety << "; sy: " << offsetx << ";" << std::endl;
 		}
-		return ret;
+		return ret2;
 	}
 
 };

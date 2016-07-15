@@ -64,7 +64,10 @@ int main(int argc, char** argv)
 					prevgrabRight = printer.getHoldingStateRight();
 					if (prevgrabRight){
 						stillConnected = stillConnected && server.signalGrab(HAND_RIGHT, 850);
-						double* orientationData = printer.getOrientationDataRight(); // TODO send data to the betaCube
+						double* orientationData = printer.getOrientationDataRight(); // TODO send data to the betaCube (send 2 double values)
+						// actually getOffSetData would a more precise name
+						// I actually 3 values but I have to project the values from 3D to 2D space so
+						// sending 2 double values is enough 
 						// query the orientationdata from the printer with printer.getOrientationDataRight();
 					}
 				}
@@ -75,7 +78,10 @@ int main(int argc, char** argv)
 					prevgrabLeft = printer.getHoldingStateLeft();
 					if (prevgrabLeft){
 						stillConnected = stillConnected && server.signalGrab(HAND_LEFT, 850);
-						double* orientationData = printer.getOrientationDataLeft(); // TODO send data to the betaCube
+						double* orientationData = printer.getOrientationDataLeft(); // TODO send data to the betaCube (send 2 double values)
+						// actually getOffSetData would a more precise name
+						// I actually 3 values but I have to project the values from 3D to 2D space so
+						// sending 2 double values is enough 
 						// query the orientationdata from the printer with printer.getOrientationDataLeft();
 					}
 				}
