@@ -11,6 +11,7 @@ private:
 
 	// debug prints
 	const bool emgprint = false;
+	const bool orientationprint = true;
 	const bool countprint = false;
 	const bool otherprints = false;
 
@@ -19,6 +20,8 @@ private:
 	const int muscleactvitythreshold = 150; // maybe 150 is best choice, but 100 and 125 also worked well
 	const int releasethreshold = 5;
 	const int holdingthreshold = 10;
+
+	const double armlength = 25; // distance from myo on the arm to the middle of the hand
 
 	myo::Myo* myoDevice;
 	myo::Arm arm;
@@ -29,6 +32,14 @@ private:
 	// used for counting the times of high low muscle actvity in pending and release phase
 	int releasecount = 0;
 	int holdingcount = -1;
+
+	int samplepointer = 0;
+	double** samples;
+	const int samplecount = 10;
+
+	double pitch_wall = 0.0;
+	double yaw_wall = 0.0;
+	double roll_wall = 0.0;
 
 	// adds up the absolute values of the emg data to have a value for the overall muscle activity
 	// use only for emg data because of hardcoded loop counter
@@ -59,11 +70,39 @@ private:
 		}
 	}
 
+	double average(double* vals){
+		double ret = 0.0;
+		for (int i = 0; i < samplecount; i++){
+			ret += vals[i];
+		}
+		ret = ret / samplecount;
+		return ret;
+	}
+
+	double modulo(double d){
+		if (d > 180.0){
+			return d - 360.0;
+		}
+		if (d < -180.0){
+			return d + 360.0;
+		}
+		return d;
+	}
+
 public:
-	MyoData(myo::Myo* dev, myo::Arm a){
+	MyoData(myo::Myo* dev, myo::Arm a, double* dArr){
 		myoDevice = dev;
 		arm = a;
 		armString = armToString(arm);
+
+		roll_wall = dArr[0];
+		pitch_wall = dArr[1];
+		yaw_wall = dArr[2],
+
+		samples = new double*[3];
+		for (int i = 0; i < 3; i++){
+			samples[i] = new double[samplecount];
+		}
 	}
 
 	myo::Myo* getMyo(){
@@ -109,6 +148,7 @@ public:
 					if (otherprints){
 						std::cout << armString << "holding flag is set to true" << std::endl;
 					}
+					myoDevice->vibrate(myoDevice->vibrationShort);
 					holding = true;
 					holdingcount = -1;
 				}
@@ -158,5 +198,53 @@ public:
 				std::cout << armString << "holding EmgData: " << " \t" << (int)emg[0] << "\t" << (int)emg[1] << "\t" << (int)emg[2] << "\t" << (int)emg[3] << "\t" << (int)emg[4] << "\t" << (int)emg[5] << "\t" << (int)emg[6] << "\t" << (int)emg[7] << "\t" << "sum: " << addedemg << std::endl;
 			}
 		}
+
 	}
+	
+	void OrientationData(double roll, double pitch, double yaw){
+		samples[0][samplepointer] = roll;
+		samples[1][samplepointer] = pitch;
+		samples[2][samplepointer] = yaw;
+		if (samplepointer == samplecount - 1){
+			samplepointer = 0;
+		}
+		else{
+			samplepointer++;
+		}
+	}
+
+	double* getOrientationData(){
+		double* ret = new double[3];
+		ret[0] = modulo(average(samples[0]) - roll_wall);
+		ret[1] = modulo(average(samples[1]) - pitch_wall);
+		ret[2] = modulo(average(samples[2]) - yaw_wall);
+		using std::atan2;
+		using std::sin;
+		using std::sqrt;
+		double sp = sin(ret[1]) * armlength;
+		double sy = sin(ret[2]) * armlength;
+/*		double distance = sqrt((sp * sp) + (sy * sy));
+		double angle = 0.0;
+		if (sp >= 0){
+			if (sy >= 0){
+				angle = atan2(sp, sy);
+			}
+			else{
+				angle = 90.0 + atan2(sp, -sy);
+			}
+		}
+		else{
+			if (sy >= 0){
+				angle = 270 + atan2(-sp, sy);
+			}
+			else{
+				angle = 180.0 + atan2(-sp, -sy);
+			}
+		}*/
+		if (orientationprint){
+			std::cout << armString << ": orientationdata: roll: " << ret[0] << "; pitch: " << ret[1] << "; yaw: " << ret[2] << ";" << std::endl;
+		}
+		return ret;
+	}
+
 };

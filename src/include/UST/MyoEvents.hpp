@@ -5,35 +5,47 @@
 // Distributed under the Myo SDK license agreement. See LICENSE.txt for details.
 
 // This sample illustrates how to interface with multiple Myo armbands and distinguish between them.
-
+#define _USE_MATH_DEFINES
+#include <math.h>
+#include <cmath>
 #include <iostream>
+#include <iomanip>
 #include <stdexcept>
+#include <list>
+#include <string>
+#include <algorithm>
 #include <vector>
 #include <myo/cxx/Vector3.hpp>
 #include <UST/MyoData.hpp>
+#include <UST/MyoWall.hpp>
 #include <myo/myo.hpp>
 
 class MyoEvents : public myo::DeviceListener {
 private:
 
 	// start deprecated variables
-	int sample = 0;
+	/*int sample = 0;
 	int** samples;
 	const int samplecount = 10;
 	int printnext10 = 0;
 	bool gyroOk = true;
 	const int gyrothreshold = 75;
 	bool accelOk = true;
-	const float accelthreshold = 0.5;
+	const float accelthreshold = 0.5;*/
 	// end deprecated variables
 
 	MyoData* right = 0;
 	MyoData* left = 0;
 
+	std::list<MyoWall*> wallData;
+
+	bool deleteFlag = false;
+
 	// debug print
 	const bool syncprints = true;
+	const bool wallmeasurementprints = true;
 
-	// not used at the moment
+/*	// not used at the moment
 	// only important for the sampling approach (but this does not work in my opinion)
 	int average(int* vals){
 		double ret = 0.0;
@@ -42,15 +54,45 @@ private:
 		}
 		ret = ret / samplecount;
 		return ((int)ret);
+	}*/
+
+	MyoWall* searchWallData(myo::Myo* myo){
+		for (std::list<MyoWall*>::iterator it = wallData.begin(); it != wallData.end(); it++)
+		{
+			if ((*it)->getMyo() == myo){
+				return (*it);
+			}
+		}
+		return 0;
+	}
+
+	void addRightArmDevice(myo::Myo* myo){
+		MyoWall* wall = searchWallData(myo);
+		right = new MyoData(myo, myo::armRight, wall->getWallData());
+		if (left != 0){
+			if (left->getMyo() == myo){
+				left = 0;
+			}
+		}
+	}
+
+	void addLeftArmDevice(myo::Myo* myo){
+		MyoWall* wall = searchWallData(myo);
+		left = new MyoData(myo, myo::armLeft, wall->getWallData());
+		if (right != 0){
+			if (right->getMyo() == myo){
+				right = 0;
+			}
+		}
 	}
 
 public:
 
 	MyoEvents(){
-		samples = new int*[8];
+		/*samples = new int*[8];
 		for (int i = 0; i < 8; i++){
 			samples[i] = new int[samplecount];
-		}
+		}*/
 	}
 
 	// Every time Myo Connect successfully pairs with a Myo armband, this function will be called.
@@ -78,12 +120,21 @@ public:
 	void onPose(myo::Myo* myo, uint64_t timestamp, myo::Pose pose)
 	{
 		std::cout << "Myo " << identifyMyo(myo) << " switched to pose " << pose.toString() << "." << std::endl;
+		myo::Pose p;
+		if (pose == p.doubleTap){
+			deleteFlag = true;
+		}
 	}
 
 	void onConnect(myo::Myo* myo, uint64_t timestamp, myo::FirmwareVersion firmwareVersion)
 	{
 		std::cout << "Myo " << identifyMyo(myo) << " has connected." << std::endl;
 		myo->setStreamEmg(myo->streamEmgEnabled);
+		MyoWall* wall = searchWallData(myo);
+		if (wall != 0){
+			wallData.remove(wall);
+		}
+		wallData.push_back(new MyoWall(myo));
 	}
 
 	void onDisconnect(myo::Myo* myo, uint64_t timestamp)
@@ -100,7 +151,7 @@ public:
 	}
 
 	// not used for muscle activity
-	void onGyroscopeData(myo::Myo* myo, uint64_t timestamp, const myo::Vector3<float>& gyro){
+/*	void onGyroscopeData(myo::Myo* myo, uint64_t timestamp, const myo::Vector3<float>& gyro){
 		if (gyro.x() < gyrothreshold && gyro.x() > -gyrothreshold && gyro.y() < gyrothreshold && gyro.y() > -gyrothreshold && gyro.z() < gyrothreshold && gyro.z() > -gyrothreshold){
 			gyroOk = true;
 			//std::cout << "holding gyroscopicData: " << "\t" << gyro.x() << "\t" << gyro.y() << "\t" << gyro.z() << std::endl;
@@ -114,7 +165,7 @@ public:
 	void onAccelerometerData(myo::Myo* myo, uint64_t timestamp, const myo::Vector3<float>& accel) {
 		/*if (holding){
 		std::cout << "holding accelData: " << "\t" << accel.x() << "\t" << accel.y() << "\t" << accel.z() << std::endl;
-		}*/
+		}*//*
 		float f = accel.x() + accel.y() + accel.z();
 		if (f > 1 - accelthreshold && f < 1 + accelthreshold){
 			accelOk = true;
@@ -122,26 +173,26 @@ public:
 		else{
 			accelOk = false;
 		}
-	}
+	}*/
 
 	void onArmSync(myo::Myo* myo, uint64_t timestamp, myo::Arm arm, myo::XDirection xDirection, float rotation,
 		myo::WarmupState warmupState)
 	{
 		if (arm == myo::armRight){
-			right = new MyoData(myo, arm);
+			addRightArmDevice(myo);
 			if (syncprints){
 				std::cout << "arm sync: new right arm device 1: " << "rotation: " << rotation << "   direction: " << xDirection << std::endl;
 			}
 		}
 		else{
 			if (arm == myo::armUnknown && right == 0){
-				right = new MyoData(myo, myo::armRight);
+				addRightArmDevice(myo);
 				if (syncprints){
 					std::cout << "arm sync: new right arm device 2: " << "rotation: " << rotation << "   direction: " << xDirection << std::endl;
 				}
 			}
 			else{
-				left = new MyoData(myo, arm);
+				addLeftArmDevice(myo);
 				if (syncprints){
 					std::cout << "arm sync: new left arm device: " << "rotation: " << rotation << "   direction: " << xDirection << std::endl;
 				}
@@ -157,6 +208,50 @@ public:
 		else{
 			if (left != 0){
 				left->emgData(emg);
+			}
+		}
+	}
+
+	void onOrientationData(myo:: Myo* myo, uint64_t timestamp, const myo::Quaternion<float>& quat) {
+		// from the onOrientationData method in the HelloMyo sample from the myo c++ sdk
+		using std::atan2;
+		using std::asin;
+		using std::sqrt;
+		using std::max;
+		using std::min;
+		double roll_w, pitch_w, yaw_w;
+
+		// Calculate Euler angles (roll, pitch, and yaw) from the unit quaternion.
+		double roll = atan2(2.0f * (quat.w() * quat.x() + quat.y() * quat.z()),
+			1.0f - 2.0f * (quat.x() * quat.x() + quat.y() * quat.y()));
+		double pitch = asin(max(-1.0f, min(1.0f, 2.0f * (quat.w() * quat.y() - quat.z() * quat.x()))));
+		double yaw = atan2(2.0f * (quat.w() * quat.z() + quat.x() * quat.y()),
+			1.0f - 2.0f * (quat.y() * quat.y() + quat.z() * quat.z()));
+
+		// Convert the floating point angles in radians to a scale from 0 to 18.
+		/*roll_w = static_cast<int>((roll + (float)M_PI) / (M_PI * 2.0f) * 18);
+		pitch_w = static_cast<int>((pitch + (float)M_PI / 2.0f) / M_PI * 18);
+		yaw_w = static_cast<int>((yaw + (float)M_PI) / (M_PI * 2.0f) * 18);*/
+		roll_w = roll * ((double)180) / M_PI;
+		pitch_w = pitch * ((double)180) / M_PI;
+		yaw_w = yaw * ((double)180) / M_PI;
+
+		for (std::list<MyoWall*>::iterator it = wallData.begin(); it != wallData.end(); it++)
+		{
+			if ((*it)->getMyo() == myo){
+				MyoWall* wall = (*it);
+				if (wall->isMeasuring()){
+					wall->OrientationData(roll_w, pitch_w, yaw_w);
+				}
+			}
+		}
+
+		if (right != 0 && myo == right->getMyo()){
+			right->OrientationData(roll_w, pitch_w, yaw_w);
+		}
+		else{
+			if (left != 0 && myo == left->getMyo()){
+				left->OrientationData(roll_w, pitch_w, yaw_w);
 			}
 		}
 	}
@@ -185,6 +280,36 @@ public:
 	bool getHoldingStateLeft(){
 		if (left != 0){
 			return left->getHoldingState();
+		}
+		return false;
+	}
+
+	double* getOrientationDataRight(){
+		if (right != 0){
+			return right->getOrientationData();
+		}
+		return 0;
+	}
+
+	double* getOrientationDataLeft(){
+		if (left != 0){
+			return left->getOrientationData();
+		}
+		return 0;
+	}
+
+	bool getDeleteState(){
+		bool temp = deleteFlag;
+		deleteFlag = false;
+		return temp;
+	}
+
+	bool isMeasuring(){
+		for (std::list<MyoWall*>::iterator it = wallData.begin(); it != wallData.end(); it++)
+		{
+			if ((*it)->isMeasuring()){
+				return true;
+			}
 		}
 		return false;
 	}

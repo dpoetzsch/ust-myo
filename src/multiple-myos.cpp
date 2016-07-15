@@ -22,9 +22,27 @@ int main(int argc, char** argv)
 
 		myo::Hub hub("com.example.multiple-myos");
 
+		bool debugprints = true;
+
 		// Instantiate the PrintMyoEvents class we defined above, and attach it as a listener to our Hub.
 		MyoEvents printer;
 		hub.addListener(&printer);
+
+		std::cout << "wait for the first myo to connect" << std::endl;
+		hub.waitForMyo(120000);
+		std::cout << "first myo connected ... measuring direction of the wall" << std::endl;
+		while (printer.isMeasuring()){
+			hub.run(10);
+		}
+		std::cout << "measuring for the first myo complete" << std::endl;
+
+		std::cout << "wait for the second myo to connect" << std::endl;
+		hub.waitForMyo(120000);
+		std::cout << "second myo connected ... measuring direction of the wall" << std::endl;
+		while (printer.isMeasuring()){
+			hub.run(10);
+		}
+		std::cout << "measuring for the second myo complete" << std::endl;
 
 		while (true) {
 			server.acceptConnection();
@@ -40,14 +58,32 @@ int main(int argc, char** argv)
 
 				// use this calls to get the holdingstate for each arm
 				if (printer.getHoldingStateRight() != prevgrabRight){
-					std::cout << "right" << std::endl;
-					if (prevgrabRight = printer.getHoldingStateRight())
+					if (debugprints){
+						std::cout << "right" << std::endl;
+					}
+					prevgrabRight = printer.getHoldingStateRight();
+					if (prevgrabRight){
 						stillConnected = stillConnected && server.signalGrab(HAND_RIGHT, 850);
+						double* orientationData = printer.getOrientationDataRight(); // TODO send data to the betaCube
+						// query the orientationdata from the printer with printer.getOrientationDataRight();
+					}
 				}
 				if (printer.getHoldingStateLeft() != prevgrabLeft){
-					std::cout << "left" << std::endl;
-					if (prevgrabLeft = printer.getHoldingStateLeft())
+					if (debugprints){
+						std::cout << "left" << std::endl;
+					}
+					prevgrabLeft = printer.getHoldingStateLeft();
+					if (prevgrabLeft){
 						stillConnected = stillConnected && server.signalGrab(HAND_LEFT, 850);
+						double* orientationData = printer.getOrientationDataLeft(); // TODO send data to the betaCube
+						// query the orientationdata from the printer with printer.getOrientationDataLeft();
+					}
+				}
+
+				if (printer.getDeleteState()){
+					stillConnected = stillConnected;// && server.signalDelete();
+					// the boolean flag automatically resets itself in the printer so getDeleteState() returns true only once
+					// when the doubleTap gesture was made
 				}
 			}
 		}
