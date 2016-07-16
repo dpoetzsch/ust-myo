@@ -26,7 +26,7 @@ int main() {
       // followed by a deletion signal until the client closes the connection
       bool goOn = true;
       while (goOn) {
-        goOn = goOn && server.signalGrab(HAND_LEFT, 850);
+        goOn = goOn && server.signalGrab(HAND_LEFT, 850, 4.657, 1.337, 87.3232);
         boost::this_thread::sleep(boost::posix_time::millisec(1000));
         goOn = goOn && server.signalDelete();
         boost::this_thread::sleep(boost::posix_time::millisec(1000));

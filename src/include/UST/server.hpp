@@ -69,10 +69,13 @@ public:
   /**
    * @return true if sending was successful, false if the connection was closed.
    */
-  bool signalGrab(Extremity extremity, int likelyhood) {
+  bool signalGrab(Extremity extremity, int likelyhood, double angleX, double angleY, double angleZ) {
     return sendMessage("{ \"type\": \"grab\", \"likelyhood\": " + boost::lexical_cast<std::string>(likelyhood) +
       ", \"extremity\": " + extremityToJson(extremity) +
-      ", \"time\": \"" + make_daytime_string() + "\" }");
+      ", \"time\": \"" + make_daytime_string() +
+      "\", \"angleX\": " + boost::lexical_cast<std::string>(angleX) +
+      ", \"angleY\": " + boost::lexical_cast<std::string>(angleY) +
+      ", \"angleZ\": " + boost::lexical_cast<std::string>(angleZ) + " }");
   }
 
   /**
