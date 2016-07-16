@@ -2,7 +2,7 @@ using System;
 using System.Threading;
 
 class MainClass {
-    public static void OnGrabbed(Extremity extremity, int likelyhood) {
+    public static void OnGrabbed(Extremity extremity, int likelyhood, Rotation rotation) {
         switch (extremity) {
         case Extremity.HAND_LEFT:
             Console.Write("Left hand: ");
@@ -17,7 +17,14 @@ class MainClass {
             Console.Write("Right foot: ");
             break;
         }
-        Console.WriteLine(likelyhood);
+        Console.Write(likelyhood);
+        Console.Write(" [rotation: ");
+        Console.Write(rotation.angleX);
+        Console.Write(" ");
+        Console.Write(rotation.angleX);
+        Console.Write(" ");
+        Console.Write(rotation.angleX);
+        Console.WriteLine("]");
     }
 
     public static void onDeleted() {

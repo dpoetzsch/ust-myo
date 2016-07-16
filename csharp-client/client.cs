@@ -13,13 +13,25 @@ enum Extremity {
     FOOT_RIGHT
 }
 
+struct Rotation {
+    public readonly double angleX;
+    public readonly double angleY;
+    public readonly double angleZ;
+
+    public Rotation(double angleX, double angleY, double angleZ) {
+        this.angleX = angleX;
+        this.angleY = angleY;
+        this.angleZ = angleZ;
+    }
+}
+
 class GrabClient {
-    private Action<Extremity, int> onGrabbed;
+    private Action<Extremity, int, Rotation> onGrabbed;
     private Action onDeleted;
     private TcpClient tcpclnt;
     private Thread listenThread;
 
-    public GrabClient(Action<Extremity, int> onGrabbed, Action onDeleted) {
+    public GrabClient(Action<Extremity, int, Rotation> onGrabbed, Action onDeleted) {
         this.onGrabbed = onGrabbed;
         this.onDeleted = onDeleted;
     }
@@ -63,7 +75,10 @@ class GrabClient {
                 if (stuff.type == "grab") {
                     int likelyhood = stuff.likelyhood;
                     int extremity = stuff.extremity;
-                    onGrabbed(fromInt(extremity), likelyhood);
+                    double angleX = stuff.angleX;
+                    double angleY = stuff.angleY;
+                    double angleZ = stuff.angleZ;
+                    onGrabbed(fromInt(extremity), likelyhood, new Rotation(angleX, angleY, angleZ));
                 } else if (stuff.type == "delete") {
                     onDeleted();
                 }
