@@ -9,9 +9,11 @@ loop do
 
   loop do
     4.times do |i|
-      client.puts "{ \"extremity\": #{i+1}, \"likelyhood\": 850, \"time\": \"#{Time.now}\" }"
+      client.puts "{ \"type\": \"grab\", \"extremity\": #{i+1}, \"likelyhood\": 850, \"time\": \"#{Time.now}\" }"
       sleep 3
     end
+    client.puts "{ \"type\": \"delete\", \"time\": \"#{Time.now}\" }"
+    sleep 3
   end
 
   client.close
