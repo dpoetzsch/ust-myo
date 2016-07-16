@@ -70,9 +70,16 @@ public:
    * @return true if sending was successful, false if the connection was closed.
    */
   bool signalGrab(Extremity extremity, int likelyhood) {
-    return sendMessage("{ \"likelyhood\": " + boost::lexical_cast<std::string>(likelyhood) +
+    return sendMessage("{ \"type\": \"grab\", \"likelyhood\": " + boost::lexical_cast<std::string>(likelyhood) +
       ", \"extremity\": " + extremityToJson(extremity) +
       ", \"time\": \"" + make_daytime_string() + "\" }");
+  }
+
+  /**
+   * @return true if sending was successful, false if the connection was closed.
+   */
+  bool signalDelete() {
+    return sendMessage("{ \"type\": \"delete\", \"time\": \"" + make_daytime_string() + "\" }");
   }
 
 private:

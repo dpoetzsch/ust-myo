@@ -9,7 +9,7 @@
 #include <boost/thread/thread.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
-#include "server.hpp"
+#include "include/UST/server.hpp"
 
 int main() {
   try {
@@ -23,8 +23,12 @@ int main() {
       // TODO if grab detected: use server.signalGrab(likelyhood)
       
       // DEMO: continuously send the grab signal with 85.0% likelyhood
-      // until the client closes the connection
-      while (server.signalGrab(HAND_LEFT, 850)) {
+      // followed by a deletion signal until the client closes the connection
+      bool goOn = true;
+      while (goOn) {
+        goOn = goOn && server.signalGrab(HAND_LEFT, 850);
+        boost::this_thread::sleep(boost::posix_time::millisec(1000));
+        goOn = goOn && server.signalDelete();
         boost::this_thread::sleep(boost::posix_time::millisec(1000));
       }
     }
