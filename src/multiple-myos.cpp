@@ -63,8 +63,8 @@ int main(int argc, char** argv)
 					}
 					prevgrabRight = printer.getHoldingStateRight();
 					if (prevgrabRight){
-						stillConnected = stillConnected && server.signalGrab(HAND_RIGHT, 850);
-						double* orientationData = printer.getOrientationDataRight(); // TODO send data to the betaCube (send 2 double values)
+						double* orientationData = printer.getOrientationDataRight();
+						stillConnected = stillConnected && server.signalGrab(HAND_RIGHT, 850, orientationData[0], orientationData[1], 0.0);
 						// actually getOffSetData would a more precise name
 						// I actually 3 values but I have to project the values from 3D to 2D space so
 						// sending 2 double values is enough 
@@ -77,8 +77,8 @@ int main(int argc, char** argv)
 					}
 					prevgrabLeft = printer.getHoldingStateLeft();
 					if (prevgrabLeft){
-						stillConnected = stillConnected && server.signalGrab(HAND_LEFT, 850);
-						double* orientationData = printer.getOrientationDataLeft(); // TODO send data to the betaCube (send 2 double values)
+						double* orientationData = printer.getOrientationDataLeft();
+						stillConnected = stillConnected && server.signalGrab(HAND_LEFT, 850, orientationData[0], orientationData[1], 0.0);
 						// actually getOffSetData would a more precise name
 						// I actually 3 values but I have to project the values from 3D to 2D space so
 						// sending 2 double values is enough 
@@ -87,7 +87,7 @@ int main(int argc, char** argv)
 				}
 
 				if (printer.getDeleteState()){
-					stillConnected = stillConnected;// && server.signalDelete();
+					stillConnected = stillConnected && server.signalDelete();
 					// the boolean flag automatically resets itself in the printer so getDeleteState() returns true only once
 					// when the doubleTap gesture was made
 				}
