@@ -28,9 +28,10 @@ int main(int argc, char** argv)
 		MyoEvents printer;
 		hub.addListener(&printer);
 
-		std::cout << "wait for the first myo to connect" << std::endl;
+		/*std::cout << "wait for the first myo to connect" << std::endl;
 		hub.waitForMyo(120000);
-		std::cout << "first myo connected ... measuring direction of the wall" << std::endl;
+		std::cout << "first myo connected ... measuring direction of the wall" << std::endl;*/
+
 		/*while (printer.isMeasuring()){
 			hub.run(10);
 		}*/
@@ -71,8 +72,13 @@ int main(int argc, char** argv)
 
 
 		// calibration phase
-		int phase = 0;
-		while (true){
+		std::cout << "wait for the first myo to connect" << std::endl;
+		int phase = -1;
+		while (printer.getOrientationDataRight() == 0 || printer.getOrientationDataLeft() == 0){
+			if (printer.isMeasuring() && phase == -1){
+				phase = 0;
+				std::cout << "first myo connected ... measuring direction of the wall" << std::endl;
+			}
 			if (!printer.isMeasuring() && phase == 0){
 				phase = 1;
 				std::cout << "measuring for the first myo complete" << std::endl;
@@ -91,11 +97,9 @@ int main(int argc, char** argv)
 				std::cout << "measuring for the second myo complete" << std::endl;
 				std::cout << "now sync the myo with the arm" << std::endl;
 			}
-			if (printer.getOrientationDataRight() != 0 && printer.getOrientationDataLeft() != 0){
-				break;
-			}
 			hub.run(10);
 		}
+		std::cout << "finished calibration" << std::endl;
 		// end of calibration phase
 
 

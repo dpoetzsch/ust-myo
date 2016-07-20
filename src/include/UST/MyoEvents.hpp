@@ -104,10 +104,12 @@ private:
 
 	void addLeftArmDevice(myo::Myo* myo){
 		MyoWall* wall = searchWallData(myo);
-		left = new MyoData(myo, myo::armLeft, wall->getWallData());
-		if (right != 0){
-			if (right->getMyo() == myo){
-				right = 0;
+		if (wall != 0){
+			left = new MyoData(myo, myo::armLeft, wall->getWallData());
+			if (right != 0){
+				if (right->getMyo() == myo){
+					right = 0;
+				}
 			}
 		}
 	}
