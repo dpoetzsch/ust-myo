@@ -18,8 +18,8 @@ private:
 	double yaw_wall = 0.0;
 	double roll_wall = 0.0; // roll is not needed at the moment because it will be projected from 3D to a 2D surface
 
-	const bool orientationprint = true;
-	const bool otherprints = true;
+	const bool orientationprint = false;
+	const bool otherprints = false;
 
 	double average(double* vals){
 		double ret = 0.0;

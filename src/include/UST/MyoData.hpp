@@ -11,7 +11,7 @@ private:
 
 	// debug prints
 	const bool emgprint = false;
-	const bool orientationprint = true;
+	const bool orientationprint = false;
 	const bool countprint = false;
 	const bool otherprints = false;
 
