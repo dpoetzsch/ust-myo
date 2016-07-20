@@ -37,7 +37,9 @@ private:
 	MyoData* right = 0;
 	MyoData* left = 0;
 
-	std::list<MyoWall*> wallData;
+	//std::list<MyoWall*> wallData;
+	MyoWall* first = 0;
+	MyoWall* second = 0;
 
 	bool deleteFlag = false;
 
@@ -57,21 +59,45 @@ private:
 	}*/
 
 	MyoWall* searchWallData(myo::Myo* myo){
-		for (std::list<MyoWall*>::iterator it = wallData.begin(); it != wallData.end(); it++)
+		/*for (std::list<MyoWall*>::iterator it = wallData.begin(); it != wallData.end(); it++)
 		{
 			if ((*it)->getMyo() == myo){
+				if (wallmeasurementprints){
+					std::cout << "wallsearch has found an object.   list size: " << wallData.size() << std::endl;
+				}
 				return (*it);
 			}
+		}
+		if (wallmeasurementprints){
+			std::cout << "wallsearch has not found an object.   list size: " << wallData.size() << std::endl;
+		}
+		return 0;*/
+		if (first != 0 && first->getMyo() == myo){
+			if (wallmeasurementprints){
+				std::cout << "wallsearch has found an object.   first" << std::endl;
+			}
+			return first;
+		}
+		if (second != 0 && second->getMyo() == myo){
+			if (wallmeasurementprints){
+				std::cout << "wallsearch has found an object.   second" << std::endl;
+			}
+			return second;
+		}
+		if (wallmeasurementprints){
+			std::cout << "wallsearch has not found an object.   first : " << (first == 0) << "      second: " << (second == 0) << std::endl;
 		}
 		return 0;
 	}
 
 	void addRightArmDevice(myo::Myo* myo){
 		MyoWall* wall = searchWallData(myo);
-		right = new MyoData(myo, myo::armRight, wall->getWallData());
-		if (left != 0){
-			if (left->getMyo() == myo){
-				left = 0;
+		if (wall != 0){
+			right = new MyoData(myo, myo::armRight, wall->getWallData());
+			if (left != 0){
+				if (left->getMyo() == myo){
+					left = 0;
+				}
 			}
 		}
 	}
@@ -128,13 +154,24 @@ public:
 
 	void onConnect(myo::Myo* myo, uint64_t timestamp, myo::FirmwareVersion firmwareVersion)
 	{
-		std::cout << "Myo " << identifyMyo(myo) << " has connected." << std::endl;
+		std::cout << "Myo " << identifyMyo(myo) << " has connected.  " << myo << std::endl;
 		myo->setStreamEmg(myo->streamEmgEnabled);
 		MyoWall* wall = searchWallData(myo);
-		if (wall != 0){
-			wallData.remove(wall);
-		}
-		wallData.push_back(new MyoWall(myo));
+		//if (wall != 0){
+			if (first == wall){
+				first = new MyoWall(myo);
+			}else{
+				second = new MyoWall(myo);
+			}
+		/*}
+		else{
+			if (first == 0){
+				first = new MyoWall(myo);
+			}
+			else{
+				second = new MyoWall(myo);
+			}
+		}*/
 	}
 
 	void onDisconnect(myo::Myo* myo, uint64_t timestamp)
@@ -236,7 +273,7 @@ public:
 		pitch_w = pitch * ((double)180) / M_PI;
 		yaw_w = yaw * ((double)180) / M_PI;
 
-		for (std::list<MyoWall*>::iterator it = wallData.begin(); it != wallData.end(); it++)
+		/*for (std::list<MyoWall*>::iterator it = wallData.begin(); it != wallData.end(); it++)
 		{
 			if ((*it)->getMyo() == myo){
 				MyoWall* wall = (*it);
@@ -244,12 +281,21 @@ public:
 					wall->OrientationData(roll_w, pitch_w, yaw_w);
 				}
 			}
+		}*/
+		if (first != 0 && first->isMeasuring()){
+			first->OrientationData(roll_w, pitch_w, yaw_w);
+		}
+		else{
+			if (second != 0 && second->isMeasuring()){
+				second->OrientationData(roll_w, pitch_w, yaw_w);
+			}
 		}
 
 		if (right != 0 && myo == right->getMyo()){
 			right->OrientationData(roll_w, pitch_w, yaw_w);
 		}
-		else{
+		else
+		{
 			if (left != 0 && myo == left->getMyo()){
 				left->OrientationData(roll_w, pitch_w, yaw_w);
 			}
@@ -305,11 +351,17 @@ public:
 	}
 
 	bool isMeasuring(){
-		for (std::list<MyoWall*>::iterator it = wallData.begin(); it != wallData.end(); it++)
+		/*for (std::list<MyoWall*>::iterator it = wallData.begin(); it != wallData.end(); it++)
 		{
 			if ((*it)->isMeasuring()){
 				return true;
 			}
+		}*/
+		if (first != 0 && first->isMeasuring()){
+			return true;
+		}
+		if (second != 0 && second->isMeasuring()){
+			return true;
 		}
 		return false;
 	}

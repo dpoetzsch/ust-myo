@@ -19,6 +19,7 @@ private:
 	double roll_wall = 0.0; // roll is not needed at the moment because it will be projected from 3D to a 2D surface
 
 	const bool orientationprint = true;
+	const bool otherprints = true;
 
 	double average(double* vals){
 		double ret = 0.0;
@@ -58,6 +59,9 @@ public:
 
 	double* getWallData(){
 		double* ret = new double[3];
+		if (otherprints){
+			std::cout << ": orientationdata: samples[0]: " << (samples[0] == 0) << "; samples[1]: " << (samples[1] == 0) << "; samples[2]: " << (samples[2] == 0) << ";" << std::endl;
+		}
 		ret[0] = average(samples[0]);
 		ret[1] = average(samples[1]);
 		ret[2] = average(samples[2]);

@@ -64,7 +64,13 @@ int main(int argc, char** argv)
 					prevgrabRight = printer.getHoldingStateRight();
 					if (prevgrabRight){
 						double* orientationData = printer.getOrientationDataRight();
-						stillConnected = stillConnected && server.signalGrab(HAND_RIGHT, 850, orientationData[0], orientationData[1], 0.0);
+						if (orientationData == 0){
+							stillConnected = stillConnected && server.signalGrab(HAND_RIGHT, 850, 0.0, 0.0, 0.0);
+						}
+						else
+						{
+							stillConnected = stillConnected && server.signalGrab(HAND_RIGHT, 850, orientationData[0], orientationData[1], 0.0);
+						}
 						// actually getOffSetData would a more precise name
 						// I actually 3 values but I have to project the values from 3D to 2D space so
 						// sending 2 double values is enough 
@@ -78,7 +84,13 @@ int main(int argc, char** argv)
 					prevgrabLeft = printer.getHoldingStateLeft();
 					if (prevgrabLeft){
 						double* orientationData = printer.getOrientationDataLeft();
-						stillConnected = stillConnected && server.signalGrab(HAND_LEFT, 850, orientationData[0], orientationData[1], 0.0);
+						if (orientationData == 0){
+							stillConnected = stillConnected && server.signalGrab(HAND_LEFT, 850, 0.0, 0.0, 0.0);
+						}
+						else
+						{
+							stillConnected = stillConnected && server.signalGrab(HAND_LEFT, 850, orientationData[0], orientationData[1], 0.0);
+						}
 						// actually getOffSetData would a more precise name
 						// I actually 3 values but I have to project the values from 3D to 2D space so
 						// sending 2 double values is enough 

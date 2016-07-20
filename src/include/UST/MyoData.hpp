@@ -221,8 +221,8 @@ public:
 		using std::atan2;
 		using std::sin;
 		using std::sqrt;
-		double offsety = sin(ret[1]) * armlength;
-		double offsetx = sin(ret[2]) * armlength;
+		double offsety = sin(ret[1] * (M_PI / ((double)180))) * armlength;
+		double offsetx = sin(ret[2] * (M_PI / ((double)180))) * armlength;
 		double* ret2 = new double[2];
 		ret2[0] = offsetx;
 		ret2[1] = offsety;
