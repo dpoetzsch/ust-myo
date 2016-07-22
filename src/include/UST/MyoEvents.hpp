@@ -114,6 +114,10 @@ private:
 		}
 	}
 
+	double RadToDeg(double rad){
+		return (rad  * ((double)180) / M_PI);
+	}
+
 public:
 
 	MyoEvents(){
@@ -159,13 +163,13 @@ public:
 		std::cout << "Myo " << identifyMyo(myo) << " has connected.  " << myo << std::endl;
 		myo->setStreamEmg(myo->streamEmgEnabled);
 		MyoWall* wall = searchWallData(myo);
-		//if (wall != 0){
-			if (first == wall){
+		if (wall == 0){
+			if (first == 0){
 				first = new MyoWall(myo);
 			}else{
 				second = new MyoWall(myo);
 			}
-		/*}
+		}/*
 		else{
 			if (first == 0){
 				first = new MyoWall(myo);
@@ -231,9 +235,10 @@ public:
 				}
 			}
 			else{
+				
 				addLeftArmDevice(myo);
 				if (syncprints){
-					std::cout << "arm sync: new left arm device: " << "rotation: " << rotation << "   direction: " << xDirection << std::endl;
+					std::cout << "arm sync: new left arm device: " << "rotation: " << rotation << "   direction: " << xDirection << "   arm: " << arm << std::endl;
 				}
 			}
 		}
@@ -245,7 +250,7 @@ public:
 			right->emgData(emg);
 		}
 		else{
-			if (left != 0){
+			if (left != 0 && myo == left->getMyo()){
 				left->emgData(emg);
 			}
 		}
@@ -271,9 +276,9 @@ public:
 		/*roll_w = static_cast<int>((roll + (float)M_PI) / (M_PI * 2.0f) * 18);
 		pitch_w = static_cast<int>((pitch + (float)M_PI / 2.0f) / M_PI * 18);
 		yaw_w = static_cast<int>((yaw + (float)M_PI) / (M_PI * 2.0f) * 18);*/
-		roll_w = roll * ((double)180) / M_PI;
-		pitch_w = pitch * ((double)180) / M_PI;
-		yaw_w = yaw * ((double)180) / M_PI;
+		roll_w = RadToDeg(roll);
+		pitch_w = RadToDeg(pitch);
+		yaw_w = RadToDeg(yaw);
 
 		/*for (std::list<MyoWall*>::iterator it = wallData.begin(); it != wallData.end(); it++)
 		{
@@ -284,11 +289,12 @@ public:
 				}
 			}
 		}*/
-		if (first != 0 && first->isMeasuring()){
+		if (first != 0 && first->isMeasuring() && myo == first->getMyo()){
 			first->OrientationData(roll_w, pitch_w, yaw_w);
 		}
-		else{
-			if (second != 0 && second->isMeasuring()){
+		else
+		{
+			if (second != 0 && second->isMeasuring() && myo == second->getMyo()){
 				second->OrientationData(roll_w, pitch_w, yaw_w);
 			}
 		}
@@ -331,17 +337,22 @@ public:
 		}
 		return false;
 	}
-
 	double* getOrientationDataRight(){
+		return getOrientationDataRight(false);
+	}
+	double* getOrientationDataLeft(){
+		return getOrientationDataLeft(false);
+	}
+	double* getOrientationDataRight(bool noprint){
 		if (right != 0){
-			return right->getOrientationData();
+			return right->getOrientationData(noprint);
 		}
 		return 0;
 	}
 
-	double* getOrientationDataLeft(){
+	double* getOrientationDataLeft(bool noprint){
 		if (left != 0){
-			return left->getOrientationData();
+			return left->getOrientationData(noprint);
 		}
 		return 0;
 	}

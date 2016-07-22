@@ -12,13 +12,13 @@ private:
 
 	int samplepointer = 0;
 	double** samples;
-	const int samplecount = 100;
+	const int samplecount = 10;
 
 	double pitch_wall = 0.0;
 	double yaw_wall = 0.0;
 	double roll_wall = 0.0; // roll is not needed at the moment because it will be projected from 3D to a 2D surface
 
-	const bool orientationprint = false;
+	const bool orientationprint = true;
 	const bool otherprints = false;
 
 	double average(double* vals){
@@ -26,7 +26,7 @@ private:
 		for (int i = 0; i < samplecount; i++){
 			ret += vals[i];
 		}
-		ret = ret / samplecount;
+		ret = ret / ((double)samplecount);
 		return ret;
 	}
 
@@ -50,6 +50,9 @@ public:
 			samples[1][samplepointer] = pitch;
 			samples[2][samplepointer] = yaw;
 			samplepointer++;
+			if (orientationprint && (samplepointer % 5 == 0)){
+				std::cout << ": orientationdata: roll: " << roll << "; pitch: " << pitch << "; yaw: " << yaw << ";" << std::endl;
+			}
 		}
 	}
 

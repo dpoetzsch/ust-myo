@@ -74,7 +74,7 @@ int main(int argc, char** argv)
 		// calibration phase
 		std::cout << "wait for the first myo to connect" << std::endl;
 		int phase = -1;
-		while (printer.getOrientationDataRight() == 0 || printer.getOrientationDataLeft() == 0){
+		while (printer.getOrientationDataRight(true) == 0 || printer.getOrientationDataLeft(true) == 0){
 			if (printer.isMeasuring() && phase == -1){
 				phase = 0;
 				std::cout << "first myo connected ... measuring direction of the wall" << std::endl;
@@ -84,7 +84,7 @@ int main(int argc, char** argv)
 				std::cout << "measuring for the first myo complete" << std::endl;
 				std::cout << "now sync the myo with the arm" << std::endl;
 			}
-			if ((printer.getOrientationDataRight() != 0 || printer.getOrientationDataLeft() != 0) &&  phase == 1){
+			if ((printer.getOrientationDataRight(true) != 0 || printer.getOrientationDataLeft(true) != 0) &&  phase == 1){
 				phase = 2;
 				std::cout << "sync for the first myo complete" << std::endl;
 				std::cout << "wait for the second myo to connect" << std::endl;

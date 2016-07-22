@@ -13,7 +13,8 @@ private:
 	const bool emgprint = false;
 	const bool orientationprint = false;
 	const bool countprint = false;
-	const bool otherprints = false;
+	const bool otherprints = true;
+	const bool sampleprint = true;
 
 	// threshold values for hold detection
 	// these 3 values are experimental, they may or may not be correct (but this worked best for me), probably they need some recalibration if someone else uses the myo
@@ -21,7 +22,7 @@ private:
 	const int releasethreshold = 5;
 	const int holdingthreshold = 10;
 
-	const double armlength = 25; //[cm] distance from myo on the arm to the middle of the hand
+	const double armlength = 25.0; //[cm] distance from myo on the arm to the middle of the hand
 
 	myo::Myo* myoDevice;
 	myo::Arm arm;
@@ -56,6 +57,10 @@ private:
 		return val;
 	}
 
+	double DegToRad(double deg){
+		return (deg * (M_PI / ((double)180.0)));
+	}
+
 	char* armToString(myo::Arm arm){
 		if (myo::armLeft == arm){
 			return "(left Arm)";
@@ -70,12 +75,15 @@ private:
 		}
 	}
 
-	double average(double* vals){
+	double average(double* vals, bool noprint){
 		double ret = 0.0;
 		for (int i = 0; i < samplecount; i++){
+			if (!noprint && sampleprint){
+				std::cout << "sampling data print: " << vals[i] << std::endl;
+			}
 			ret += vals[i];
 		}
-		ret = ret / samplecount;
+		ret = ret / ((double)samplecount);
 		return ret;
 	}
 
@@ -212,17 +220,37 @@ public:
 			samplepointer++;
 		}
 	}
-
 	double* getOrientationData(){
+		return getOrientationData(false);
+	}
+	double* getOrientationData(bool noprint){
 		double* ret = new double[3];
-		ret[0] = modulo(average(samples[0]) - roll_wall);
-		ret[1] = modulo(average(samples[1]) - pitch_wall);
-		ret[2] = modulo(average(samples[2]) - yaw_wall);
+		if (!noprint && sampleprint){
+			std::cout << "printing roll samples" << std::endl;
+		}
+		ret[0] = modulo(average(samples[0], noprint) - roll_wall);
+		if (!noprint && sampleprint){
+			std::cout << "printing pitch samples" << std::endl;
+		}
+		ret[1] = modulo(average(samples[1], noprint) - pitch_wall);
+		if (!noprint && sampleprint){
+			std::cout << "printing yaw samples" << std::endl;
+		}
+		ret[2] = modulo(average(samples[2], noprint) - yaw_wall);
 		using std::atan2;
 		using std::sin;
+		using std::cos;
 		using std::sqrt;
-		double offsety = sin(ret[1] * (M_PI / ((double)180))) * armlength;
-		double offsetx = sin(ret[2] * (M_PI / ((double)180))) * armlength;
+		//double offsetx = sin(DegToRad(ret[2])) * armlength;
+
+
+		double xpart1 = sin(DegToRad(ret[2])) * armlength;
+		double xpart2 = sin(DegToRad(ret[0])) * armlength;
+		double cosPitch = (cos(DegToRad(((double)2.0) * ret[1])) + ((double)1.0)) / ((double)2.0);
+		double offsetx = (cosPitch * xpart1) + ((((double)1.0) - cosPitch) * xpart2);
+		
+		double offsety = sin(DegToRad(ret[1])) * armlength;
+
 		double* ret2 = new double[2];
 		ret2[0] = offsetx;
 		ret2[1] = offsety;
