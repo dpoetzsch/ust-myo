@@ -208,6 +208,12 @@ public:
 		}
 
 	}
+
+	// TODO not sure if we need this method
+	void setRoll(double r){
+		roll_wall = r;
+	}
+	//
 	
 	void OrientationData(double roll, double pitch, double yaw){
 		samples[0][samplepointer] = roll;

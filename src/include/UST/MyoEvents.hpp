@@ -223,6 +223,7 @@ public:
 	{
 		if (arm == myo::armRight){
 			addRightArmDevice(myo);
+			// right->setRoll(180.0 - RadToDeg(((double)rotation))); // TODO
 			if (syncprints){
 				std::cout << "arm sync: new right arm device 1: " << "rotation: " << rotation << "   direction: " << xDirection << std::endl;
 			}
@@ -230,6 +231,7 @@ public:
 		else{
 			if (arm == myo::armUnknown && right == 0){
 				addRightArmDevice(myo);
+				// right->setRoll(180.0 - RadToDeg(((double)rotation))); // TODO
 				if (syncprints){
 					std::cout << "arm sync: new right arm device 2: " << "rotation: " << rotation << "   direction: " << xDirection << std::endl;
 				}
@@ -237,6 +239,7 @@ public:
 			else{
 				
 				addLeftArmDevice(myo);
+				// left->setRoll(180.0 - RadToDeg(((double)rotation))); // TODO
 				if (syncprints){
 					std::cout << "arm sync: new left arm device: " << "rotation: " << rotation << "   direction: " << xDirection << "   arm: " << arm << std::endl;
 				}
