@@ -12,7 +12,7 @@ private:
 
 	int samplepointer = 0;
 	double** samples;
-	const int samplecount = 10;
+	const int samplecount = 100;
 
 	double pitch_wall = 0.0;
 	double yaw_wall = 0.0;
@@ -66,7 +66,7 @@ public:
 			std::cout << ": orientationdata: samples[0]: " << (samples[0] == 0) << "; samples[1]: " << (samples[1] == 0) << "; samples[2]: " << (samples[2] == 0) << ";" << std::endl;
 		}
 		ret[0] = average(samples[0]);
-		// ret[0] = 0.0; // TODO maybe use this line if we use the arm sync to estimate the roll angle as rotation of the myo on the arm
+		// ret[0] = 60.0; // TODO maybe use this line if we use the arm sync to estimate the roll angle as rotation of the myo on the arm
 		ret[1] = average(samples[1]);
 		ret[2] = average(samples[2]);
 		if (orientationprint){
