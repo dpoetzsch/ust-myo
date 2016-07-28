@@ -38,9 +38,9 @@ private:
 	double** samples;
 	const int samplecount = 10;
 
-	/*double pitch_wall = 0.0;
+	double pitch_wall = 0.0;
 	double yaw_wall = 0.0;
-	double roll_wall = 0.0;*/
+	double roll_wall = 0.0;
 
 	// adds up the absolute values of the emg data to have a value for the overall muscle activity
 	// use only for emg data because of hardcoded loop counter
@@ -103,9 +103,9 @@ public:
 		arm = a;
 		armString = armToString(arm);
 
-		/*roll_wall = dArr[0];
+		roll_wall = dArr[0];
 		pitch_wall = dArr[1];
-		yaw_wall = dArr[2]; */
+		yaw_wall = dArr[2];
 
 		samples = new double*[3];
 		for (int i = 0; i < 3; i++){
@@ -215,7 +215,7 @@ public:
 	}*/
 	//
 	
-	/*void OrientationData(double roll, double pitch, double yaw){
+	void OrientationData(double roll, double pitch, double yaw){
 		samples[0][samplepointer] = roll;
 		samples[1][samplepointer] = pitch;
 		samples[2][samplepointer] = yaw;
@@ -226,12 +226,12 @@ public:
 		else{
 			samplepointer++;
 		}
-	}*/
+	}
 	double* getOrientationData(){
 		return 0;// getOrientationData(false);
 	}
 	double* getOrientationData(bool noprint){
-		/*double* ret = new double[3];
+		double* ret = new double[3];
 		if (!noprint && sampleprint){
 			std::cout << "printing roll samples" << std::endl;
 		}
@@ -243,7 +243,7 @@ public:
 		/*if (ret[1] < 0){
 			ret[0] = ret[0] + 2 * roll_wall;
 		}*/
-		/*if (!noprint && sampleprint){
+		if (!noprint && sampleprint){
 			std::cout << "printing yaw samples" << std::endl;
 		}
 		ret[2] = modulo(average(samples[2], noprint) - yaw_wall);
@@ -311,13 +311,12 @@ public:
 				angle = 180.0 + atan2(-offsety, -offsetx);
 			}
 		}*/
-		/*if (orientationprint){
+		if (orientationprint){
 			std::cout << armString << ": orientationdata: roll: " << ret[0] << "; pitch: " << ret[1] << "; yaw: " << ret[2] << ";" << std::endl;
 			//std::cout << armString << ": orientationdata offset: sp: " << offsety << "; sy: " << offsetx << ";" << std::endl;
 			std::cout << armString << ": orientationdata offset: x: " << x << "; y: " << y << ";" << std::endl;
 		}
-		return ret2;*/
-		return 0;
+		return ret2;
 	}
 
 };

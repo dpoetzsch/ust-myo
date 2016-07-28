@@ -38,8 +38,8 @@ private:
 	MyoData* left = 0;
 
 	//std::list<MyoWall*> wallData;
-	//MyoWall* first = 0;
-	//MyoWall* second = 0;
+	MyoWall* first = 0;
+	MyoWall* second = 0;
 
 	bool deleteFlag = false;
 
@@ -58,7 +58,7 @@ private:
 		return ((int)ret);
 	}*/
 
-/*	MyoWall* searchWallData(myo::Myo* myo){
+	MyoWall* searchWallData(myo::Myo* myo){
 		/*for (std::list<MyoWall*>::iterator it = wallData.begin(); it != wallData.end(); it++)
 		{
 			if ((*it)->getMyo() == myo){
@@ -72,7 +72,7 @@ private:
 			std::cout << "wallsearch has not found an object.   list size: " << wallData.size() << std::endl;
 		}
 		return 0;*/
-		/*if (first != 0 && first->getMyo() == myo){
+		if (first != 0 && first->getMyo() == myo){
 			if (wallmeasurementprints){
 				std::cout << "wallsearch has found an object.   first" << std::endl;
 			}
@@ -88,30 +88,30 @@ private:
 			std::cout << "wallsearch has not found an object.   first : " << (first == 0) << "      second: " << (second == 0) << std::endl;
 		}
 		return 0;
-	}*/
+	}
 
 	void addRightArmDevice(myo::Myo* myo){
-		//MyoWall* wall = searchWallData(myo);
-		//if (wall != 0){
-			right = new MyoData(myo, myo::armRight, 0);// wall->getWallData());
+		MyoWall* wall = searchWallData(myo);
+		if (wall != 0){
+			right = new MyoData(myo, myo::armRight, wall->getWallData());
 			if (left != 0){
 				if (left->getMyo() == myo){
 					left = 0;
 				}
 			}
-		//}
+		}
 	}
 
 	void addLeftArmDevice(myo::Myo* myo){
-		//MyoWall* wall = searchWallData(myo);
-		//if (wall != 0){
-		left = new MyoData(myo, myo::armLeft, 0);// wall->getWallData());
+		MyoWall* wall = searchWallData(myo);
+		if (wall != 0){
+		left = new MyoData(myo, myo::armLeft, wall->getWallData());
 			if (right != 0){
 				if (right->getMyo() == myo){
 					right = 0;
 				}
 			}
-		//}
+		}
 	}
 
 	double RadToDeg(double rad){
@@ -162,14 +162,14 @@ public:
 	{
 		std::cout << "Myo " << identifyMyo(myo) << " has connected.  " << myo << std::endl;
 		myo->setStreamEmg(myo->streamEmgEnabled);
-		/*MyoWall* wall = searchWallData(myo);
+		MyoWall* wall = searchWallData(myo);
 		if (wall == 0){
 			if (first == 0){
 				first = new MyoWall(myo);
 			}else{
 				second = new MyoWall(myo);
 			}
-		}*//*
+		}/*
 		else{
 			if (first == 0){
 				first = new MyoWall(myo);
@@ -259,7 +259,7 @@ public:
 		}
 	}
 
-	/*void onOrientationData(myo:: Myo* myo, uint64_t timestamp, const myo::Quaternion<float>& quat) {
+	void onOrientationData(myo:: Myo* myo, uint64_t timestamp, const myo::Quaternion<float>& quat) {
 		// from the onOrientationData method in the HelloMyo sample from the myo c++ sdk
 		using std::atan2;
 		using std::asin;
@@ -279,7 +279,7 @@ public:
 		/*roll_w = static_cast<int>((roll + (float)M_PI) / (M_PI * 2.0f) * 18);
 		pitch_w = static_cast<int>((pitch + (float)M_PI / 2.0f) / M_PI * 18);
 		yaw_w = static_cast<int>((yaw + (float)M_PI) / (M_PI * 2.0f) * 18);*/
-		/*roll_w = RadToDeg(roll);
+		roll_w = RadToDeg(roll);
 		pitch_w = RadToDeg(pitch);
 		yaw_w = RadToDeg(yaw);
 
@@ -292,7 +292,7 @@ public:
 				}
 			}
 		}*/
-		/*if (first != 0 && first->isMeasuring() && myo == first->getMyo()){
+		if (first != 0 && first->isMeasuring() && myo == first->getMyo()){
 			first->OrientationData(roll_w, pitch_w, yaw_w);
 		}
 		else
@@ -311,7 +311,7 @@ public:
 				left->OrientationData(roll_w, pitch_w, yaw_w);
 			}
 		}
-	}*/
+	}
 
 	// This is a utility function implemented for this sample that maps a myo::Myo* to a unique ID starting at 1.
 	// It does so by looking for the Myo pointer in knownMyos, which onPair() adds each Myo into as it is paired.
@@ -373,12 +373,12 @@ public:
 				return true;
 			}
 		}*/
-		/*if (first != 0 && first->isMeasuring()){
+		if (first != 0 && first->isMeasuring()){
 			return true;
 		}
 		if (second != 0 && second->isMeasuring()){
 			return true;
-		}*/
+		}
 		return false;
 	}
 

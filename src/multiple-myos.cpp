@@ -72,7 +72,7 @@ int main(int argc, char** argv)
 
 
 		// calibration phase
-/*		std::cout << "wait for the first myo to connect" << std::endl;
+		std::cout << "wait for the first myo to connect" << std::endl;
 		int phase = -1;
 		while (printer.getOrientationDataRight(true) == 0 || printer.getOrientationDataLeft(true) == 0){
 			if (printer.isMeasuring() && phase == -1){
@@ -101,7 +101,6 @@ int main(int argc, char** argv)
 		}
 		std::cout << "finished calibration" << std::endl;
 		// end of calibration phase
-		*/
 
 
 		while (true) {
@@ -129,7 +128,7 @@ int main(int argc, char** argv)
 						}
 						else
 						{
-							stillConnected = stillConnected && server.signalGrab(HAND_RIGHT, 850, 0.0, 0.0, 0.0);// orientationData[0], orientationData[1], 0.0);
+							stillConnected = stillConnected && server.signalGrab(HAND_RIGHT, 850, orientationData[0], orientationData[1], 0.0);
 						}
 						// actually getOffSetData would a more precise name
 						// I actually 3 values but I have to project the values from 3D to 2D space so
@@ -149,7 +148,7 @@ int main(int argc, char** argv)
 						}
 						else
 						{
-							stillConnected = stillConnected && server.signalGrab(HAND_LEFT, 850, 0.0, 0.0, 0.0); // orientationData[0], orientationData[1], 0.0);
+							stillConnected = stillConnected && server.signalGrab(HAND_LEFT, 850, orientationData[0], orientationData[1], 0.0);
 						}
 						// actually getOffSetData would a more precise name
 						// I actually 3 values but I have to project the values from 3D to 2D space so
