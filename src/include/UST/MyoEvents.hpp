@@ -340,12 +340,15 @@ public:
 		}
 		return false;
 	}
+
 	double* getOrientationDataRight(){
 		return getOrientationDataRight(false);
 	}
+
 	double* getOrientationDataLeft(){
 		return getOrientationDataLeft(false);
 	}
+
 	double* getOrientationDataRight(bool noprint){
 		if (right != 0){
 			return right->getOrientationData(noprint);

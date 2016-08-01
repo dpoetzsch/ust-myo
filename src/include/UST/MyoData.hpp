@@ -57,6 +57,23 @@ private:
 		return val;
 	}
 
+	double toContinousScale(double d){
+		double val = d;
+		if (val >= 0.0 && val < 90.0){
+			val = val;
+		}
+		if (val >= 90.0 && val < 180.0){
+			val = 180.0 - val;
+		}
+		if (val < 0.0 && val >= -90.0){
+			val = val;
+		}
+		if (val < -90.0){
+			val = -180.0 - val;
+		}
+		return val;
+	}
+
 	double DegToRad(double deg){
 		return (deg * (M_PI / ((double)180.0)));
 	}
@@ -88,11 +105,11 @@ private:
 	}
 
 	double modulo(double d){
-		if (d > 180.0){
-			return d - 360.0;
+		if (d > 90.0){
+			return d - 180.0;
 		}
-		if (d < -180.0){
-			return d + 360.0;
+		if (d < -90.0){
+			return d + 180.0;
 		}
 		return d;
 	}
@@ -212,9 +229,9 @@ public:
 	// TODO not sure if we need this method
 	/*void setRoll(double r){
 		roll_wall = r;
-	}*/
+		}*/
 	//
-	
+
 	void OrientationData(double roll, double pitch, double yaw){
 		samples[0][samplepointer] = roll;
 		samples[1][samplepointer] = pitch;
@@ -222,95 +239,106 @@ public:
 		if (samplepointer == samplecount - 1){
 			samplepointer = 0;
 			std::cout << armString << ": orientationdata: roll: " << roll << "; pitch: " << pitch << "; yaw: " << yaw << ";" << std::endl;
+			std::cout << armString << ": orientationdata(after correction): roll: " << toContinousScale(roll - roll_wall) << "; pitch: " << pitch - pitch_wall << "; yaw: " << toContinousScale(yaw - yaw_wall) << ";" << std::endl;
 		}
 		else{
 			samplepointer++;
 		}
 	}
+
 	double* getOrientationData(){
-		return 0;// getOrientationData(false);
+		return getOrientationData(false);
 	}
+
 	double* getOrientationData(bool noprint){
 		double* ret = new double[3];
 		if (!noprint && sampleprint){
 			std::cout << "printing roll samples" << std::endl;
 		}
-		ret[0] = modulo(average(samples[0], noprint) - roll_wall);
+		//ret[0] = modulo(average(samples[0], noprint) - roll_wall);
+		ret[0] = toContinousScale(average(samples[0], noprint) - roll_wall);
 		if (!noprint && sampleprint){
 			std::cout << "printing pitch samples" << std::endl;
 		}
-		ret[1] = modulo(average(samples[1], noprint) - pitch_wall);
-		/*if (ret[1] < 0){
-			ret[0] = ret[0] + 2 * roll_wall;
-		}*/
+		//ret[1] = modulo(average(samples[1], noprint) - pitch_wall);
+		ret[1] = average(samples[1], noprint) - pitch_wall;
 		if (!noprint && sampleprint){
 			std::cout << "printing yaw samples" << std::endl;
 		}
-		ret[2] = modulo(average(samples[2], noprint) - yaw_wall);
+		//ret[2] = modulo(average(samples[2], noprint) - yaw_wall);
+		ret[2] = toContinousScale(average(samples[2], noprint) - yaw_wall);
+
 		using std::atan2;
 		using std::sin;
 		using std::cos;
 		using std::sqrt;
+		using std::min;
+		using std::max;
 		//double offsetx = sin(DegToRad(ret[2])) * armlength;
 		double x = 0.0;
 		double y = 0.0;
-		if (ret[1] > 80){
+		/*if (ret[1] > 80){
 			x = cos(DegToRad(ret[0] - ret[2]));
 			y = -sin(DegToRad(ret[0] - ret[2]));
-		}
-		else if(ret[1] < -80){
+			}
+			else if(ret[1] < -80){
 			x = -cos(DegToRad(ret[0] + ret[2]));
 			y = -sin(DegToRad(ret[0] + ret[2]));
-		}
-		else{
-			// yaw
-			double sinAlpha = sin(DegToRad(ret[2]));
-			double cosAlpha = cos(DegToRad(ret[2]));
-			// pitch
-			double sinBeta = sin(DegToRad(ret[1]));
-			double cosBeta = cos(DegToRad(ret[1]));
-			// roll
-			double sinGamma = sin(DegToRad(ret[0]));
-			double cosGamma = cos(DegToRad(ret[0]));
+			}
+			else{*/
+		// yaw
+		double sinAlpha = sin(DegToRad(ret[2]));
+		double cosAlpha = cos(DegToRad(ret[2]));
+		// pitch
+		double sinBeta = sin(DegToRad(ret[1]));
+		double cosBeta = cos(DegToRad(ret[1]));
+		// roll
+		double sinGamma = sin(DegToRad(ret[0]));
+		double cosGamma = cos(DegToRad(ret[0]));
 
-			//double x = armlength * (sinAlpha * cosBeta * cosGamma + sinBeta * sinGamma);
-			//double y = armlength * (sinAlpha * cosBeta * sinGamma - sinBeta * cosGamma);
-			//double z = armlength * (cosAlpha * cosBeta);
+		//double x = armlength * (sinAlpha * cosBeta * cosGamma + sinBeta * sinGamma);
+		//double y = armlength * (sinAlpha * cosBeta * sinGamma - sinBeta * cosGamma);
+		//double z = armlength * (cosAlpha * cosBeta);
 
-			x = armlength * (cosAlpha * sinBeta * cosGamma + sinAlpha * sinGamma);
-			y = armlength * (sinAlpha * sinBeta * cosGamma - cosAlpha * sinGamma);
-			double z = armlength * (cosBeta * cosGamma);
+		//x = armlength * (cosAlpha * sinBeta * cosGamma + sinAlpha * sinGamma);
+		//y = armlength * (sinAlpha * sinBeta * cosGamma - cosAlpha * sinGamma);
+		//double z = armlength * (cosBeta * cosGamma);
 
-			double xpart1 = sin(DegToRad(ret[2])) * armlength;
-			double xpart2 = sin(DegToRad(ret[0])) * armlength;
-			double cosPitch = (cos(DegToRad(((double)2.0) * ret[1])) + ((double)1.0)) / ((double)2.0);
-			double offsetx = (cosPitch * xpart1) + ((((double)1.0) - cosPitch) * xpart2);
+		double xpart1 = sinAlpha * armlength;
+		double xpart2 = sinGamma * armlength;
+		double cosPitch = (cos(DegToRad(((double)2.0) * ret[1])) + ((double)1.0)) / ((double)2.0);
+		double offsetx = (cosPitch * xpart1) + ((((double)1.0) - cosPitch) * xpart2);
 
-			double offsety = sin(DegToRad(ret[1])) * armlength;
-			//ret2[0] = offsetx;
-			//ret2[1] = offsety;
-		}
+		double offsety = sinBeta * armlength;
+		x = offsetx;
+		y = offsety;
+		//}
 		double* ret2 = new double[2];
+		if (x > 0.0){
+			x = min(cosBeta * armlength, x);
+		}else{
+			x = max(- (cosBeta * armlength), x);
+		}
 		ret2[0] = x;
 		ret2[1] = y;
-/*		double distance = sqrt((offsety * offsety) + (offsetx * offsetx));
-		double angle = 0.0;
-		if (offsety >= 0){
-			if (offsetx >= 0){
+		/*		double distance = sqrt((offsety * offsety) + (offsetx * offsetx));
+				double angle = 0.0;
+				if (offsety >= 0){
+				if (offsetx >= 0){
 				angle = atan2(offsety, offsetx);
-			}
-			else{
+				}
+				else{
 				angle = 90.0 + atan2(offsety, -offsetx);
-			}
-		}
-		else{
-			if (offsetx >= 0){
+				}
+				}
+				else{
+				if (offsetx >= 0){
 				angle = 270 + atan2(-offsety, offsetx);
-			}
-			else{
+				}
+				else{
 				angle = 180.0 + atan2(-offsety, -offsetx);
-			}
-		}*/
+				}
+				}*/
 		if (orientationprint){
 			std::cout << armString << ": orientationdata: roll: " << ret[0] << "; pitch: " << ret[1] << "; yaw: " << ret[2] << ";" << std::endl;
 			//std::cout << armString << ": orientationdata offset: sp: " << offsety << "; sy: " << offsetx << ";" << std::endl;

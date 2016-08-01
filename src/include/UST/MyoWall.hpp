@@ -12,7 +12,7 @@ private:
 
 	int samplepointer = 0;
 	double** samples;
-	const int samplecount = 100;
+	const int samplecount = 10;
 
 	double pitch_wall = 0.0;
 	double yaw_wall = 0.0;

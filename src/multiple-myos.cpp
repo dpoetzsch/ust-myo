@@ -86,6 +86,7 @@ int main(int argc, char** argv)
 			}
 			if ((printer.getOrientationDataRight(true) != 0 || printer.getOrientationDataLeft(true) != 0) &&  phase == 1){
 				phase = 2;
+				break; // TODO just as test case for 1 myo
 				std::cout << "sync for the first myo complete" << std::endl;
 				std::cout << "wait for the second myo to connect" << std::endl;
 			}
