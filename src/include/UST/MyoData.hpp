@@ -314,10 +314,14 @@ public:
 		y = offsety;
 		//}
 		double* ret2 = new double[2];
+		double tempDouble = cosBeta * armlength;
+		if (tempDouble < 0.0){
+			tempDouble = -tempDouble;
+		}
 		if (x > 0.0){
-			x = min(cosBeta * armlength, x);
+			x = min(tempDouble, x);
 		}else{
-			x = max(- (cosBeta * armlength), x);
+			x = max(-tempDouble, x);
 		}
 		ret2[0] = x;
 		ret2[1] = y;
