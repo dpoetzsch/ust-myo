@@ -12,22 +12,36 @@ private:
 
 	int samplepointer = 0;
 	double** samples;
-	const int samplecount = 10;
+	const int samplecount = 100;
 
 	double pitch_wall = 0.0;
 	double yaw_wall = 0.0;
-	double roll_wall = 0.0; // roll is not needed at the moment because it will be projected from 3D to a 2D surface
+	double roll_wall = 0.0;
 
 	const bool orientationprint = true;
 	const bool otherprints = false;
 
+	double distance(double val1, double val2){
+		double ret = val1 - val2;
+		if (val1 <= 0.0 && val2 <= 0.0){
+			return ret;
+		}
+		if (val1 >= 0.0 && val2 >= 0.0){
+			return ret;
+		}
+		if (ret <= 180.0 && ret >= -180.0){
+			return ret;
+		}
+		return val2 - val1;
+	}
+
 	double average(double* vals){
 		double ret = 0.0;
-		for (int i = 0; i < samplecount; i++){
-			ret += vals[i];
+		for (int i = 1; i < samplecount; i++){
+			ret += distance(vals[0],vals[i]);
 		}
-		ret = ret / ((double)samplecount);
-		return ret;
+		ret = ret / (((double)samplecount) - 1.0);
+		return vals[0] + ret;
 	}
 
 public:

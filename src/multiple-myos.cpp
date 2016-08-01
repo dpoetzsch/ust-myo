@@ -126,7 +126,7 @@ int main(int argc, char** argv)
 						using namespace std::chrono;
 						milliseconds ms = duration_cast< milliseconds >(system_clock::now().time_since_epoch());
 						milliseconds ms2 = duration_cast< milliseconds >(system_clock::now().time_since_epoch());
-						while ((ms2 - ms).count() <= 200L){
+						while ((ms2 - ms).count() <= 250L){
 							hub.run(10);
 							ms2 = duration_cast< milliseconds >(system_clock::now().time_since_epoch());
 						}
@@ -153,7 +153,7 @@ int main(int argc, char** argv)
 						using namespace std::chrono;
 						milliseconds ms = duration_cast< milliseconds >(system_clock::now().time_since_epoch());
 						milliseconds ms2 = duration_cast< milliseconds >(system_clock::now().time_since_epoch());
-						while ((ms2 - ms).count() <= 200L){
+						while ((ms2 - ms).count() <= 250L){
 							hub.run(10);
 							ms2 = duration_cast< milliseconds >(system_clock::now().time_since_epoch());
 						}

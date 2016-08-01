@@ -58,7 +58,7 @@ private:
 	}
 
 	double toContinousScale(double d){
-		double val = d;
+		double val = fitToScale(d);
 		if (val >= 0.0 && val < 90.0){
 			val = val;
 		}
@@ -104,12 +104,9 @@ private:
 		return ret;
 	}
 
-	double modulo(double d){
-		if (d > 90.0){
-			return d - 180.0;
-		}
-		if (d < -90.0){
-			return d + 180.0;
+	double fitToScale(double d){
+		if (d > 180.0 || d < -180.0){
+			return d/2;
 		}
 		return d;
 	}
@@ -233,9 +230,9 @@ public:
 	//
 
 	void OrientationData(double roll, double pitch, double yaw){
-		samples[0][samplepointer] = roll;
-		samples[1][samplepointer] = pitch;
-		samples[2][samplepointer] = yaw;
+		samples[0][samplepointer] = toContinousScale(roll - roll_wall);
+		samples[1][samplepointer] = pitch - pitch_wall;
+		samples[2][samplepointer] = toContinousScale(yaw - yaw_wall);
 		if (samplepointer == samplecount - 1){
 			samplepointer = 0;
 			std::cout << armString << ": orientationdata: roll: " << roll << "; pitch: " << pitch << "; yaw: " << yaw << ";" << std::endl;
@@ -256,17 +253,17 @@ public:
 			std::cout << "printing roll samples" << std::endl;
 		}
 		//ret[0] = modulo(average(samples[0], noprint) - roll_wall);
-		ret[0] = toContinousScale(average(samples[0], noprint) - roll_wall);
+		ret[0] = average(samples[0], noprint);
 		if (!noprint && sampleprint){
 			std::cout << "printing pitch samples" << std::endl;
 		}
 		//ret[1] = modulo(average(samples[1], noprint) - pitch_wall);
-		ret[1] = average(samples[1], noprint) - pitch_wall;
+		ret[1] = average(samples[1], noprint);
 		if (!noprint && sampleprint){
 			std::cout << "printing yaw samples" << std::endl;
 		}
 		//ret[2] = modulo(average(samples[2], noprint) - yaw_wall);
-		ret[2] = toContinousScale(average(samples[2], noprint) - yaw_wall);
+		ret[2] = average(samples[2], noprint);
 
 		using std::atan2;
 		using std::sin;
