@@ -13,7 +13,7 @@
 #include <stdexcept>
 #include <UST/MyoEvents.hpp>
 #include <UST/server.hpp>
-
+#include <chrono>
 
 int main(int argc, char** argv)
 {
@@ -123,6 +123,13 @@ int main(int argc, char** argv)
 					}
 					prevgrabRight = printer.getHoldingStateRight();
 					if (prevgrabRight){
+						using namespace std::chrono;
+						milliseconds ms = duration_cast< milliseconds >(system_clock::now().time_since_epoch());
+						milliseconds ms2 = duration_cast< milliseconds >(system_clock::now().time_since_epoch());
+						while ((ms2 - ms).count() <= 200L){
+							hub.run(10);
+							ms2 = duration_cast< milliseconds >(system_clock::now().time_since_epoch());
+						}
 						double* orientationData = printer.getOrientationDataRight();
 						if (orientationData == 0){
 							stillConnected = stillConnected && server.signalGrab(HAND_RIGHT, 850, 0.0, 0.0, 0.0);
@@ -143,6 +150,13 @@ int main(int argc, char** argv)
 					}
 					prevgrabLeft = printer.getHoldingStateLeft();
 					if (prevgrabLeft){
+						using namespace std::chrono;
+						milliseconds ms = duration_cast< milliseconds >(system_clock::now().time_since_epoch());
+						milliseconds ms2 = duration_cast< milliseconds >(system_clock::now().time_since_epoch());
+						while ((ms2 - ms).count() <= 200L){
+							hub.run(10);
+							ms2 = duration_cast< milliseconds >(system_clock::now().time_since_epoch());
+						}
 						double* orientationData = printer.getOrientationDataLeft();
 						if (orientationData == 0){
 							stillConnected = stillConnected && server.signalGrab(HAND_LEFT, 850, 0.0, 0.0, 0.0);
