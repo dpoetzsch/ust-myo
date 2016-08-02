@@ -41,7 +41,7 @@ private:
 			ret += distance(vals[0],vals[i]);
 		}
 		ret = ret / (((double)samplecount) - 1.0);
-		return vals[0] + ret;
+		return vals[0] - ret;
 	}
 
 public:
@@ -79,8 +79,9 @@ public:
 		if (otherprints){
 			std::cout << ": orientationdata: samples[0]: " << (samples[0] == 0) << "; samples[1]: " << (samples[1] == 0) << "; samples[2]: " << (samples[2] == 0) << ";" << std::endl;
 		}
-		ret[0] = average(samples[0]);
-		// ret[0] = 60.0; // TODO maybe use this line if we use the arm sync to estimate the roll angle as rotation of the myo on the arm
+		//ret[0] = average(samples[0]);
+		ret[0] = -60.0; // TODO maybe use this line if we use the arm sync to estimate the roll angle as rotation of the myo on the arm
+						// -60.0 is the standard roll of the arm (at least when I tested it, maybe this value needs some calibration)
 		ret[1] = average(samples[1]);
 		ret[2] = average(samples[2]);
 		if (orientationprint){
