@@ -77,7 +77,7 @@ private:
 			ret += distance(vals[0], vals[i]);
 		}
 		ret = ret / (((double)samplecount) - 1.0);
-		return vals[0] - ret;
+		return modulo(vals[0] - ret);
 	}
 
 	double modulo(double d){

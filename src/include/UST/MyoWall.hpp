@@ -41,7 +41,17 @@ private:
 			ret += distance(vals[0],vals[i]);
 		}
 		ret = ret / (((double)samplecount) - 1.0);
-		return vals[0] - ret;
+		return modulo(vals[0] - ret);
+	}
+
+	double modulo(double d){
+		if (d > 180.0){
+			return d - 360.0;
+		}
+		if (d < -180.0){
+			return d + 360.0;
+		}
+		return d;
 	}
 
 public:
