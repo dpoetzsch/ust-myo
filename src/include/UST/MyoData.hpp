@@ -274,8 +274,8 @@ public:
 		samples[2][samplepointer] = modulo(yaw - yaw_wall);
 		if (samplepointer == samplecount - 1){
 			samplepointer = 0;
-			std::cout << armString << ": orientationdata: roll: " << roll << "; pitch: " << pitch << "; yaw: " << yaw << ";" << std::endl;
-			std::cout << armString << ": orientationdata(after correction): roll: " << modulo(roll - roll_wall) << "; pitch: " << pitch - pitch_wall << "; yaw: " << modulo(yaw - yaw_wall) << ";" << std::endl;
+			//std::cout << armString << ": orientationdata: roll: " << roll << "; pitch: " << pitch << "; yaw: " << yaw << ";" << std::endl;
+			//std::cout << armString << ": orientationdata(after correction): roll: " << modulo(roll - roll_wall) << "; pitch: " << pitch - pitch_wall << "; yaw: " << modulo(yaw - yaw_wall) << ";" << std::endl;
 		}
 		else{
 			samplepointer++;
